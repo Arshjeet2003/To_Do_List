@@ -3,6 +3,7 @@ package com.example.android.todolist;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -20,6 +21,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -47,8 +49,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private TextView overview_tv;
+    private TextView priority_tv;
+    private TextView status_tv;
+    private TextView time_tv;
     /**
      * Identifier for the pet data loader
      */
@@ -130,6 +137,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             getLoaderManager().initLoader(EXISTING_TASK_LOADER, null, this);
         }
 
+        overview_tv = findViewById(R.id.overview_tv);
+        priority_tv = findViewById(R.id.priority_tv);
+        status_tv = findViewById(R.id.status);
+        time_tv = findViewById(R.id.time_tv);
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.edit_pet_name);
         mDescriptionEditText = (EditText) findViewById(R.id.edit_pet_breed);
@@ -150,6 +161,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mPrioritySpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
+        setupSharedPreferences();
 
         set_time.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,10 +181,88 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 }
         });
     }
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(EditorActivity.this);
+        loadFontFromPreference(sharedPreferences);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(EditorActivity.this);
 
-    /**
-     * Setup the dropdown spinner that allows the user to select the gender of the pet.
-     */
+    }
+
+    private void loadFontFromPreference(SharedPreferences sharedPreferences){
+        String font = sharedPreferences.getString(getResources().getString(R.string.font_preference_key),getString(R.string.playfair_font));
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            if(font.equals(getResources().getString(R.string.aargh_font))) {
+                Typeface typeface = getResources().getFont(R.font.aargh);
+                set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.adamina_font))){
+                Typeface typeface = getResources().getFont(R.font.adamina_regular);
+                set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.damion_font))){
+                Typeface typeface = getResources().getFont(R.font.damion_regular);
+                set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.licorice_font))){
+                Typeface typeface = getResources().getFont(R.font.licorice_regular);
+                set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.monospace_font))){
+                        Typeface typeface = getResources().getFont(R.font.monospace);
+                        set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.playfair_font))){
+                        Typeface typeface = getResources().getFont(R.font.playfair);
+                        set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.shizuru_font))){
+                        Typeface typeface = getResources().getFont(R.font.shizuru_regular);
+                        set_font(typeface);
+            }
+            else if(font.equals(getResources().getString(R.string.ubuntu_font))){
+                        Typeface typeface = getResources().getFont(R.font.ubuntu_light);
+                        set_font(typeface);
+            }
+
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        if(key.equals(getResources().getString(R.string.font_preference_key))){
+            loadFontFromPreference(sharedPreferences);
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //To prevent memory leak
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private void set_font(Typeface typeface){
+        mNameEditText.setTypeface(typeface);
+        mDescriptionEditText.setTypeface(typeface);
+        mHoursEditText.setTypeface(typeface);
+        mMinEditText.setTypeface(typeface);
+        mDone.setTypeface(typeface);
+        overview_tv.setTypeface(typeface);
+        priority_tv.setTypeface(typeface);
+        set_time.setTypeface(typeface);
+        time_tv.setTypeface(typeface);
+        status_tv.setTypeface(typeface);
+    }
+
+
+
+
+
+        /**
+         * Setup the dropdown spinner that allows the user to select the gender of the pet.
+         */
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
@@ -222,17 +312,21 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreferences_key),MODE_PRIVATE);
-        String status = sharedPreferences.getString(getString(R.string.status_key), getString(R.string.pending_task));
+        int status = sharedPreferences.getInt(getString(R.string.status_key),-1);
         ContentValues values = new ContentValues();
         values.put(TaskEntry.COLUMN_TASK_NAME, nameString);
         values.put(TaskEntry.COLUMN_TASK_DESCRIPTION, descriptionString);
         values.put(TaskEntry.COLUMN_TASK_PRIORITY, mPriority);
-        if(mDone.getText().toString().equals(getResources().getString(R.string.done)) || status.equals(getResources().getString(R.string.done))) {
-            values.put(TaskEntry.COLUMN_TASK_STATUS, getResources().getString(R.string.done));
+        if(mDone.getText().toString().equals(getResources().getString(R.string.done)) || status==1) {
+            values.put(TaskEntry.COLUMN_TASK_STATUS, getString(R.string.done));
             notification_cancel();
         }
         else{
-            values.put(TaskEntry.COLUMN_TASK_STATUS, status);
+            values.put(TaskEntry.COLUMN_TASK_STATUS,getString(R.string.pending_task));
+        }
+
+        if(status==0){
+            values.put(TaskEntry.COLUMN_TASK_STATUS,getString(R.string.pending_task));
         }
         // If the time is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
@@ -246,7 +340,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         if(hour.equals("00") && min.equals("00")){
 
         }
-        else if(mDone.getText().toString().equals(getResources().getString(R.string.done)) || status.equals(getResources().getString(R.string.done))){
+        else if(mDone.getText().toString().equals(getResources().getString(R.string.done)) || status==1){
             Toast.makeText(EditorActivity.this,"Task Completed",Toast.LENGTH_SHORT).show();
         }
         else{
@@ -297,7 +391,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     {
         super.onPrepareOptionsMenu(menu);
 
-        // If this is a new pet, hide the "Delete" menu item.
+        // If this is a new task, hide the "Delete" menu item.
         if(mCurrentTaskUri==null)
         {
             MenuItem menuItem = menu.findItem(R.id.action_delete);
@@ -334,6 +428,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 //going back to catalog activity
                 finish();
                 return true;
+
+            case R.id.action_settings:
+
+                Intent intent = new Intent(EditorActivity.this,Settings.class);
+                startActivity(intent);
+                break;
+
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Pop up confirmation dialog for deletion
@@ -460,9 +561,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             if(status.equals(getResources().getString(R.string.done))){
                 mDone.setTextColor(getResources().getColor(R.color.green_lowPriority));
             }
-            // Gender is a dropdown spinner, so map the constant value from the database
-            // into one of the dropdown options (0 is Unknown, 1 is Male, 2 is Female)
-            // Then call setSelection() so that option is displayed on screen as the current selection
             switch (priority) {
                 case TaskEntry.PRIORITY_MEDIUM:
                     mPrioritySpinner.setSelection(1);
@@ -476,8 +574,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreferences_key),MODE_PRIVATE);
-        String status = sharedPreferences.getString(getString(R.string.status_key), getString(R.string.pending_task));
-        if(status.equals(getResources().getString(R.string.done))) {
+        int status = sharedPreferences.getInt(getString(R.string.status_key), -1);
+        if(status==1) {
+            saveTask();
+            finish();
+        }
+        else if(status==0){
             saveTask();
             finish();
         }

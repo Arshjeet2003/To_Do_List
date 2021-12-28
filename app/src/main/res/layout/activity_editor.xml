@@ -18,6 +18,7 @@
 
         <!-- Label -->
         <TextView
+            android:id="@+id/overview_tv"
             style="@style/CategoryStyle"
             android:text="@string/category_overview"
             android:textSize="20sp" />
@@ -63,6 +64,7 @@
 
         <!-- Label -->
         <TextView
+            android:id="@+id/priority_tv"
             style="@style/CategoryStyle"
             android:text="@string/category_priority"
             android:textSize="20sp" />
@@ -96,6 +98,7 @@
 
         <!-- Label -->
         <TextView
+            android:id="@+id/time_tv"
             style="@style/CategoryStyle"
             android:layout_gravity="center"
             android:text="@string/category_time"
@@ -166,7 +169,7 @@
         <TextView
             android:id="@+id/status"
             style="@style/CategoryStyle"
-            android:layout_width="99dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/status"

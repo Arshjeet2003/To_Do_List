@@ -23,11 +23,25 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="status">Status:</string>
-    <string name="pending_task">Pending task</string>
+    <string name="pending_task">Pending Task</string>
     <string name="sharedpreferences_key">taskstatus</string>
     <string name="status_key">taskdone</string>
     <string name="done">Done</string>
     <string name="channel_name">Channel Name</string>
     <string name="channel_description">channel description</string>
     <string name="task_completed">Task Completed</string>
+
+    <string name="playfair_font">PlayFair</string>
+    <string name="adamina_font">Adamina</string>
+    <string name="ubuntu_font">Ubuntu</string>
+    <string name="aargh_font">Aargh</string>
+    <string name="monospace_font">Monospace</string>
+    <string name="damion_font">Damion</string>
+    <string name="shizuru_font">Shizuru</string>
+    <string name="licorice_font">Licorice</string>
+    <string name="font_preference_key">font_pref</string>
+    <string name="font_title">Fonts</string>
+    <string name="settings">Settings</string>
+
+
 </resources>

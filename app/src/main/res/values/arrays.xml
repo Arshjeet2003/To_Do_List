@@ -6,4 +6,26 @@
         <item>@string/medium_priority</item>
         <item>@string/high_priority</item>
     </string-array>
+
+    <string-array name="font_options">
+        <item>@string/playfair_font</item>
+        <item>@string/adamina_font</item>
+        <item>@string/ubuntu_font</item>
+        <item>@string/aargh_font</item>
+        <item>@string/monospace_font</item>
+        <item>@string/damion_font</item>
+        <item>@string/shizuru_font</item>
+        <item>@string/licorice_font</item>
+    </string-array>
+
+    <string-array name="font_keys">
+        <item>@string/playfair_font</item>
+        <item>@string/adamina_font</item>
+        <item>@string/ubuntu_font</item>
+        <item>@string/aargh_font</item>
+        <item>@string/monospace_font</item>
+        <item>@string/damion_font</item>
+        <item>@string/shizuru_font</item>
+        <item>@string/licorice_font</item>
+    </string-array>
 </resources>

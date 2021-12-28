@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.todolist.data.TaskContract;
 
@@ -73,19 +71,25 @@ public class TaskCursorAdapter extends CursorAdapter {
         nameTextView.setText(taskName);
         int color_priority = Integer.parseInt(taskPriority);
 
-        GradientDrawable background = (GradientDrawable) priority_color.getBackground();
-        switch (color_priority){
-            case 0: background.setColor(context.getResources().getColor(R.color.green_lowPriority));
-            break;
-            case 1: background.setColor(context.getResources().getColor(R.color.orange_mediumPriority));
-            break;
-            case 2: background.setColor(context.getResources().getColor(R.color.red_highPriority));
-            break;
-            default: priority_color.setBackgroundColor(context.getResources().getColor(R.color.white));
+        GradientDrawable background = (GradientDrawable) priority_color.getBackground();switch (color_priority) {
+            case 0:
+                background.setColor(context.getResources().getColor(R.color.green_lowPriority));
+                break;
+            case 1:
+                background.setColor(context.getResources().getColor(R.color.orange_mediumPriority));
+                break;
+            case 2:
+                background.setColor(context.getResources().getColor(R.color.red_highPriority));
+                break;
+            default:
+                priority_color.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
-        if(taskStatus.equals(context.getResources().getString(R.string.done))){
+        if (taskStatus.equals(context.getResources().getString(R.string.done))) {
             nameTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             background.setColor(context.getResources().getColor(R.color.black));
+        }
+        else if(taskStatus.equals(context.getResources().getString(R.string.pending_task))){
+            nameTextView.setPaintFlags(nameTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
     }
 }

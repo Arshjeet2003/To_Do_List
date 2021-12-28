@@ -12,6 +12,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,7 +66,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         mCursorAdapter = new TaskCursorAdapter(this ,null);
         taskListView.setAdapter(mCursorAdapter);
 
-
 //        setup the item click listener
         taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,7 +86,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 super.onSwipeRight(pos);
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreferences_key),MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(getString(R.string.status_key),getString(R.string.done));
+                editor.putInt(getString(R.string.status_key),1);
                 editor.apply();
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
                 Uri currentPetUri = ContentUris.withAppendedId(TaskEntry.CONTENT_URI, taskListView.getItemIdAtPosition(pos));
@@ -99,12 +99,20 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onSwipeLeft(int pos) {
                 super.onSwipeLeft(pos);
-                Toast.makeText(CatalogActivity.this,"hello left",Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.sharedpreferences_key),MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(getString(R.string.status_key),0);
+                editor.apply();
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                Uri currentPetUri = ContentUris.withAppendedId(TaskEntry.CONTENT_URI, taskListView.getItemIdAtPosition(pos));
+                //setting the URI on the data field of the intent
+                intent.setData(currentPetUri);
+                intent.putExtra("id",pos);
+                startActivity(intent);
             }
         });
         //kick off the loader
         getLoaderManager().initLoader(TASK_LOADER,null,this);
-
     }
 
     /**
