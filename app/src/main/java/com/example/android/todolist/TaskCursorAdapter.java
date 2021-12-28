@@ -72,9 +72,7 @@ public class TaskCursorAdapter extends CursorAdapter {
         number.setText(String.valueOf(cursor.getPosition() + 1) + ")");
         nameTextView.setText(taskName);
         int color_priority = Integer.parseInt(taskPriority);
-        if(taskStatus.equals(context.getResources().getString(R.string.done))){
-            nameTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        }
+
         GradientDrawable background = (GradientDrawable) priority_color.getBackground();
         switch (color_priority){
             case 0: background.setColor(context.getResources().getColor(R.color.green_lowPriority));
@@ -84,6 +82,10 @@ public class TaskCursorAdapter extends CursorAdapter {
             case 2: background.setColor(context.getResources().getColor(R.color.red_highPriority));
             break;
             default: priority_color.setBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+        if(taskStatus.equals(context.getResources().getString(R.string.done))){
+            nameTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            background.setColor(context.getResources().getColor(R.color.black));
         }
     }
 }
